@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ChatsModule } from './chats/chats.module';
 import mongodbConfig from '././shared/config/mongodb.config';
 
 
@@ -18,7 +19,9 @@ import mongodbConfig from '././shared/config/mongodb.config';
         uri: configService.get<string>('mongodb.uri')
       }),
       inject: [ConfigService]
-    })],
+    }),
+    ChatsModule
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
@@ -36,3 +39,5 @@ export class AppModule {
       }
   }
 }
+
+

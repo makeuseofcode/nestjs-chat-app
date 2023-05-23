@@ -5,6 +5,7 @@ import { UsersService } from './../users/users.service';
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import * as argon2 from 'argon2'
 import { JwtService } from '@nestjs/jwt';
+import JwtPayload from './jwtPayload.interface';
 
 @Injectable()
 export class AuthService {
@@ -104,5 +105,19 @@ export class AuthService {
         const tokens = await this.getTokens(user._id, user.email);
         await this.updateRefreshToken(user._id, tokens.refreshToken);
         return { ...tokens, ...user };
+      
+    }
+
+
+    public async getUserFromAuthenticationToken(token: string) {
+        const payload: JwtPayload = this.jwtService.verify(token, {
+          secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
+        });
+        
+        const userId = payload.sub
+
+        if (userId) {
+            return this.usersService.findById(userId);
+        }
       }
 }
